@@ -15,7 +15,7 @@ exports.getAll = (req, res, next) => {
  * Récupère une categorie par son id
  * @param {string} req.params.id id du categorie à récupérer
  */
-exports.get = (req, res, next) => {
+exports.get = async (req, res, next) => {
     let categorie = await Category.findOne({ _id: req.params.id });
     if (categorie) {
         res.status(200).json({ categorie });
@@ -40,7 +40,7 @@ exports.create = (req, res) => {
  * Supprime une categorie par son id
  * @param {string} req.params.id id de la categorie à supprimer
  */
-exports.delete = (req, res, next) => {
+exports.delete = async (req, res, next) => {
     let category = await Category.findOne({ _id: req.params.id });
     if (category) {
         category.delete();
