@@ -1,19 +1,28 @@
 const bcrypt = require('bcrypt');
-//const User = require('../model/user.model');
+const User = require('../model/user.model');
 
 /**
  * Récupère tous les user 
  */
-exports.getAll = (req, res) => {
-
-};
+exports.getAll =async (req, res) => {
+    let user = await User.find();
+    if (user) {
+        res.status(200).json({ user });
+    } else {
+        res.status(404).json({ message: "erreur" });
+}};
 
 /**
  * Récupère un user par son id
  * @param {string} req.params.id id du user à récupérer
  */
-exports.getOne = (req, res) => {
-
+exports.getOne =async (req, res) => {
+    let user = await User.findOne({ _id: req.params.id });
+    if (user) {
+        res.status(200).json({ user });
+    } else {
+        res.status(404).json({ message: "erreur" });
+    }
 };
 
 /**
@@ -23,7 +32,11 @@ exports.getOne = (req, res) => {
 exports.signup = (req, res) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
-            /* TODO : créer l'utilisateur, avec le hash du password */
+            let user = new User();
+            user.email = req.body.email;
+            user.password = hash;
+            user.save();
+            res.status(200).json({ user });
         })
         .catch((error) => {
             res.status(500).json({ error: error });
@@ -35,33 +48,50 @@ exports.signup = (req, res) => {
  * @param {string} req.body.email email de connexion
  * @param {string} req.body.password password de connexion
  */
-exports.login = (req, res, next) => {
-    /* TODO : trouver l'utilisateur par son email */
-    /* TODO : s'il existe on execute le code en dessous*/
-    bcrypt.compare(req.body.password, user.password)
-        .then(valid => {
-            if (!valid) {
-                return res.status(401).json({ error: 'incorrect password' });
-            }
-            /* TODO : le mot de passe est valide, on retourne l'utilisateur */
-        })
-        .catch(error => res.status(500).json({ error }));
-    /* TODO : sinon s'il n'existe pas, on retourne une erreur*/
-};
+exports.login = async(req, res, next) => {
+    let user = await User.findOne({ email: req.body.email })
+    if (user) {
+        bcrypt.compare(req.body.password, user.password)
+            .then(valid => {
+                if (!valid) {
+                    return res.status(401).json({ error: 'incorrect password' });
+                }
+                res.status(200).json({ user });
+            })
+            .catch(error => res.status(500).json({ error }));
+        /* TODO : sinon s'il n'existe pas, on retourne une erreur*/
+    } else {
+        res.status(404).json({ message: "utilisateur non trouvé" })
+}};
 
 /**
  * Modifie un user par son id
  * @param {string} req.params.id id du user à modifier
  * @param {string} req.body informations du user à modifier
  */
-exports.update = (req, res, next) => {
+exports.update =async (req, res, next) => {
+    let user = await User.findOne({ _id: req.params.id });
+    bcrypt.hash(req.body.password, 10)
+        .then(async hash => {
 
+            user.email = req.body.email;
+            user.password = hash;
+            user.save();
+        })
+    res.status(201).json({ message: "Utilisateur mis à jour" });
 };
 
 /**
  * Supprime un user par son id
  * @param {string} req.params.id id du user à supprimer
  */
-exports.delete = (req, res) => {
-
+exports.delete = async(req, res) => {
+    let user = await User.findOne({ _id: req.params.id });
+    if (user) {
+        user.delete();
+        /*User.deleteOne({ _id: user._id });*/
+        res.status(200).json({ message: "utilisateur supprimé" });
+    } else {
+        res.status(404).json({ message: "utilisateur non trouvé" });
+    }
 };
