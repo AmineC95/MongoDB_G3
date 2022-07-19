@@ -6,8 +6,13 @@ const Category = require("../model/category.model");
 /**
  * Récupère les categories
  */
-exports.getAll = (req, res, next) => {
-
+exports.getAll = async(req, res, next) => {
+    let category = await Category.find();
+    if (category) {
+        res.status(200).json({ category });
+    } else {
+        res.status(404).json({ message: "erreur" });
+    }
 };
 
 
