@@ -1,0 +1,23 @@
+{
+  "name": "mongodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/training-dev-fr/MongoDb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/training-dev-fr/MongoDb/issues"
+  },
+  "homepage": "https://github.com/training-dev-fr/MongoDb#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.18.1"
+  }
+}
